@@ -300,6 +300,7 @@ namespace Nez
 				parent._children.Add(this);
 
 			_parent = parent;
+			_localDirty = _positionDirty = _localPositionDirty = _localRotationDirty = _localScaleDirty = true;
 			SetDirty(DirtyType.PositionDirty);
 
 			return this;
@@ -540,6 +541,8 @@ namespace Nez
 				if (Parent != null)
 				{
 					Matrix2D.Multiply(ref _localTransform, ref Parent._worldTransform, out _worldTransform);
+
+					System.Diagnostics.Debug.Assert(_localTransform.Translation + Parent._worldTransform.Translation == _worldTransform.Translation);
 
 					_rotation = _localRotation + Parent._rotation;
 					_scale = Parent._scale * _localScale;
