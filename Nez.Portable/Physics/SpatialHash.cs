@@ -546,7 +546,7 @@ namespace Nez.Spatial
 		//Rectangle _hitTesterRect; see note in checkRayIntersection
 		RaycastHit[] _hits;
 		RaycastHit _tempHit;
-		List<Collider> _checkedColliders = new List<Collider>();
+		HashSet<Collider> _checkedColliders = new HashSet<Collider>();
 		List<RaycastHit> _cellHits = new List<RaycastHit>();
 		Ray2D _ray;
 		int _layerMask;
