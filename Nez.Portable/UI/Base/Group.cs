@@ -356,6 +356,8 @@ namespace Nez.UI
 		/// <param name="transform">Transform.</param>
 		protected void ApplyTransform(Batcher batcher, Matrix transform)
 		{
+			transform = Matrix.Multiply(transform, batcher.TransformMatrix);
+
 			_previousBatcherTransform = batcher.TransformMatrix;
 			batcher.End();
 			batcher.Begin(transform);
