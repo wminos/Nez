@@ -101,7 +101,7 @@ namespace Nez.BitmapFonts
 				if (requiresTransformation)
 					Vector2Ext.Transform(ref p, ref _transformationMatrix, out p);
 
-				var destRect = RectangleExt.FromFloats
+				var destRect = new RectangleF
 				(
 					p.X, p.Y,
 					currentChar.Bounds.Width * scale.X,

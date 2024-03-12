@@ -508,7 +508,7 @@ namespace Nez
 
 		public void Draw(
 			Texture2D texture,
-			Rectangle destinationRectangle,
+			RectangleF destinationRectangle,
 			Rectangle? sourceRectangle,
 			Color color,
 			float rotation,

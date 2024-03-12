@@ -988,6 +988,11 @@ namespace Nez
 			return RectangleExt.FromFloats(self.X, self.Y, self.Width, self.Height);
 		}
 
+		public static implicit operator RectangleF(Rectangle self)
+		{
+			return new RectangleF(self.X, self.Y, self.Width, self.Height);
+		}
+
 		#endregion
 	}
 }
