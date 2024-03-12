@@ -536,6 +536,9 @@ namespace Nez.UI
 		/// <returns>The width.</returns>
 		public float GetWidth()
 		{
+			if (Camera != null)
+				return Camera.Bounds.Width;
+
 			if (Entity != null && !IsFullScreen)
 				return Entity.Scene.SceneRenderTargetSize.X;
 
@@ -549,6 +552,9 @@ namespace Nez.UI
 		/// <returns>The height.</returns>
 		public float GetHeight()
 		{
+			if (Camera != null)
+				return Camera.Bounds.Height;
+
 			if (Entity != null && !IsFullScreen)
 				return Entity.Scene.SceneRenderTargetSize.Y;
 
