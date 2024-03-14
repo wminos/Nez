@@ -59,6 +59,13 @@ namespace Nez.UI
 		IGamepadFocusable _gamepadFocusElement;
 
 
+
+		public IGamepadFocusable GetGamepadFocusElement()
+		{
+			return _gamepadFocusElement;
+		}
+
+
 		public Stage()
 		{
 			root = new Group();
