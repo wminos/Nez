@@ -186,7 +186,23 @@ namespace Nez.BitmapFonts
 
 		public bool HasCharacter(char character) => ContainsCharacter(character);
 
-		public string WrapText(string text, float maxLineWidth)
+		public string WrapText(string input, float maxLineWidth)
+		{
+			var inputLines = input.Split('\n');
+			var outputLines = new List<string>();
+
+			foreach (var inputLine in inputLines)
+			{
+				var midLine = WrapTextOriginal(inputLine, maxLineWidth);
+				var midLines = midLine.Split('\n');
+				outputLines.AddRange(midLines);
+			}
+
+			var outputLine = string.Join("\n", outputLines).TrimEnd();
+			return outputLine;
+		}
+
+		public string WrapTextOriginal(string text, float maxLineWidth)
 		{
 			var words = text.Split(' ');
 			var sb = new StringBuilder();
