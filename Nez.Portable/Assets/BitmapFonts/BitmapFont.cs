@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -194,11 +195,11 @@ namespace Nez.BitmapFonts
 			foreach (var inputLine in inputLines)
 			{
 				var midLine = WrapTextOriginal(inputLine, maxLineWidth);
-				var midLines = midLine.Split('\n');
+				var midLines = midLine.Split('\n').Select(mid => mid.TrimEnd());
 				outputLines.AddRange(midLines);
 			}
 
-			var outputLine = string.Join("\n", outputLines).TrimEnd();
+			var outputLine = string.Join("\n", outputLines);
 			return outputLine;
 		}
 
