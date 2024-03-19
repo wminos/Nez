@@ -225,9 +225,9 @@ namespace Nez.BitmapFonts
 					if (size.X > maxLineWidth)
 					{
 						if (sb.ToString() == "")
-							sb.Append(WrapText(word.Insert(word.Length / 2, " ") + " ", maxLineWidth));
+							sb.Append(WrapTextOriginal(word.Insert(word.Length / 2, " ") + " ", maxLineWidth));
 						else
-							sb.Append("\n" + WrapText(word.Insert(word.Length / 2, " ") + " ", maxLineWidth));
+							sb.Append("\n" + WrapTextOriginal(word.Insert(word.Length / 2, " ") + " ", maxLineWidth));
 					}
 					else
 					{
