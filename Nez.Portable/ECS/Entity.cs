@@ -280,6 +280,7 @@ namespace Nez
 			if (Scene == null)
 				return;
 
+			_enabled = false;
 			_isDestroyed = true;
 			Scene.Entities.Remove(this);
 			Transform.Parent = null;
