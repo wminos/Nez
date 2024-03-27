@@ -58,6 +58,7 @@ namespace Nez.UI
 		bool _isGamepadFocusEnabled;
 		IGamepadFocusable _gamepadFocusElement;
 
+		public static bool PreventInput { get; set; } = false;
 
 
 		public IGamepadFocusable GetGamepadFocusElement()
@@ -181,6 +182,11 @@ namespace Nez.UI
 
 		public void Update()
 		{
+			if (PreventInput)
+			{
+				return;
+			}
+
 			if (_isGamepadFocusEnabled)
 				UpdateGamepadState();
 			UpdateKeyboardState();
