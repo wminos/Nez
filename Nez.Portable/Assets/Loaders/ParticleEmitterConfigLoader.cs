@@ -11,13 +11,17 @@ namespace Nez.ParticleDesigner
 {
 	public static class ParticleEmitterConfigLoader
 	{
+		public delegate Stream OpenStreamFunc(string filepath);
+
+		public static OpenStreamFunc OpenStream = TitleContainer.OpenStream;
+
 		/// <summary>
 		/// parses a ParticleDesigner pex file or one exported from the Nez.Samples exporter or from Particle Editor:
 		/// http://onebyonedesign.com/flash/particleeditor/
 		/// </summary>
 		public static ParticleEmitterConfig Load(string name)
 		{
-			using (var stream = TitleContainer.OpenStream(name))
+			using (var stream = OpenStream(name))
 			{
 				using (var reader = XmlReader.Create(stream))
 				{
@@ -113,7 +117,7 @@ namespace Nez.ParticleDesigner
 			else
 			{
 				var path = Path.Combine(rootDir, (string)textureElement.Attribute("name"));
-				using (var stream = TitleContainer.OpenStream(path))
+				using (var stream = OpenStream(path))
 				{
 					var texture = Texture2D.FromStream(Core.GraphicsDevice, stream);
 					config.Sprite = new Textures.Sprite(texture);

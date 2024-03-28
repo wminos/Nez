@@ -11,6 +11,10 @@ namespace Nez.BitmapFonts
 	/// </summary>
 	public static class BitmapFontLoader
 	{
+		public delegate Stream OpenStreamFunc(string filepath);
+
+		public static OpenStreamFunc OpenStream = TitleContainer.OpenStream;
+
 		/// <summary>
 		/// Loads a bitmap font from a file, attempting nto auto detect the file type
 		/// </summary>
@@ -23,7 +27,7 @@ namespace Nez.BitmapFonts
 		/// </returns>
 		public static BitmapFont LoadFontFromFile(string filename, bool premultiplyAlpha = false)
 		{
-			using (var file = TitleContainer.OpenStream(filename))
+			using (var file = OpenStream(filename))
 			{
 				using (var reader = new StreamReader(file))
 				{
@@ -50,7 +54,7 @@ namespace Nez.BitmapFonts
 		public static BitmapFont LoadFontFromTextFile(string filename, bool premultiplyAlpha = false)
 		{
 			var font = new BitmapFont();
-			using (var stream = TitleContainer.OpenStream(filename))
+			using (var stream = OpenStream(filename))
 				font.LoadText(stream);
 
 			QualifyResourcePaths(font, Path.GetDirectoryName(filename));
@@ -71,7 +75,7 @@ namespace Nez.BitmapFonts
 		public static BitmapFont LoadFontFromXmlFile(string filename, bool premultiplyAlpha = false)
 		{
 			var font = new BitmapFont();
-			using (var stream = TitleContainer.OpenStream(filename))
+			using (var stream = OpenStream(filename))
 				font.LoadXml(stream);
 
 			QualifyResourcePaths(font, Path.GetDirectoryName(filename));
