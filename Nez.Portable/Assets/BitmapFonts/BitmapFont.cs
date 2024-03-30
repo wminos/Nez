@@ -365,7 +365,7 @@ namespace Nez.BitmapFonts
 				}
 				else
 				{
-					var data = this[character];
+					var data = this.ContainsCharacter(character) ? this[character] : DefaultCharacter;
 					var width = data.XAdvance + GetKerning(previousCharacter, character) + Spacing.X;
 					if (maxWidth != kNoMaxWidth && currentLineWidth + width >= maxWidth)
 					{
