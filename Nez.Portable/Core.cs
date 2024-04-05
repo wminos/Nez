@@ -230,7 +230,11 @@ namespace Nez
 
 			// update all our systems and global managers
 			Time.Update((float)gameTime.ElapsedGameTime.TotalSeconds);
-			Input.Update();
+
+			if (IsActive)
+			{
+				Input.Update();
+			}
 
 			if (ExitOnEscapeKeypress &&
 				(Input.IsKeyDown(Keys.Escape) || Input.GamePads[0].IsButtonReleased(Buttons.Back)))
