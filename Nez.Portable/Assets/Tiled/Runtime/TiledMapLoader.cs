@@ -475,7 +475,7 @@ namespace Nez.Tiled
 			{
 				obj.ObjectType = TmxObjectType.Point;
 			}
-			else if (template != null) // If it had a template attribute it must have been an object
+			else if (template == null) // If it had a template attribute it must have been an object
 			{
 				obj.ObjectType = TmxObjectType.Basic;
 			}
