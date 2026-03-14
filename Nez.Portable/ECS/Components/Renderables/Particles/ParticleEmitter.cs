@@ -27,6 +27,23 @@ namespace Nez.Particles
 		}
 
 		/// <summary>
+		/// If true, the particle Sprite will render from its own origin rather than default Sprite.Center
+		/// </summary>
+		public bool ShouldRenderUsingSpriteOrigin
+		{
+			set
+			{
+				if (_emitterConfig.Sprite != null)
+				{
+					if(value)
+						_spriteRenderOrigin = _emitterConfig.Sprite.Origin;
+					else
+						_spriteRenderOrigin = _emitterConfig.Sprite.Center;
+				}
+			}
+		}
+
+		/// <summary>
 		/// config object with various properties to deal with particle collisions
 		/// </summary>
 		public ParticleCollisionConfig CollisionConfig;
@@ -65,6 +82,7 @@ namespace Nez.Particles
 		bool _playOnAwake;
 		[Inspectable] ParticleEmitterConfig _emitterConfig;
 
+		Vector2 _spriteRenderOrigin;
 
 		public ParticleEmitter() : this(new ParticleEmitterConfig())
 		{
@@ -85,6 +103,10 @@ namespace Nez.Particles
 			CollisionConfig.LifetimeLoss = 0f;
 			CollisionConfig.MinKillSpeedSquared = float.MinValue;
 			CollisionConfig.RadiusScale = 0.8f;
+
+			// render from the Sprite's Center rather than it's Origin.
+			// performs _spriteRenderOrigin = _emitterConfig.Sprite.Center;
+			ShouldRenderUsingSpriteOrigin = false;
 
 			Init();
 		}
@@ -178,11 +200,11 @@ namespace Nez.Particles
 				else
 				{
 					// particle is good. collect min/max positions for the bounds
-					var pos = _emitterConfig.SimulateInWorldSpace ? currentParticle.spawnPosition : rootPosition;
-					pos += currentParticle.position;
+					var pos = _emitterConfig.SimulateInWorldSpace ? currentParticle.SpawnPosition : rootPosition;
+					pos += currentParticle.Position;
 					Vector2.Min(ref min, ref pos, out min);
 					Vector2.Max(ref max, ref pos, out max);
-					maxParticleSize = Math.Max(maxParticleSize, currentParticle.particleSize);
+					maxParticleSize = Math.Max(maxParticleSize, currentParticle.ParticleSize);
 				}
 			}
 
@@ -215,16 +237,16 @@ namespace Nez.Particles
 			for (var i = 0; i < _particles.Count; i++)
 			{
 				var currentParticle = _particles[i];
-				var pos = _emitterConfig.SimulateInWorldSpace ? currentParticle.spawnPosition : rootPosition;
+				var pos = _emitterConfig.SimulateInWorldSpace ? currentParticle.SpawnPosition : rootPosition;
 
 				if (_emitterConfig.Sprite == null)
-					batcher.Draw(Graphics.Instance.PixelTexture, pos + currentParticle.position, currentParticle.color,
-						currentParticle.rotation, Vector2.One, currentParticle.particleSize * 0.5f, SpriteEffects.None,
+					batcher.Draw(Graphics.Instance.PixelTexture, pos + currentParticle.Position, currentParticle.Color,
+						currentParticle.Rotation, Vector2.One, currentParticle.ParticleSize * 0.5f, SpriteEffects.None,
 						LayerDepth);
 				else
-					batcher.Draw(_emitterConfig.Sprite, pos + currentParticle.position,
-						currentParticle.color, currentParticle.rotation, _emitterConfig.Sprite.Center,
-						currentParticle.particleSize / _emitterConfig.Sprite.SourceRect.Width, SpriteEffects.None,
+					batcher.Draw(_emitterConfig.Sprite, pos + currentParticle.Position,
+						currentParticle.Color, currentParticle.Rotation, _spriteRenderOrigin,
+						currentParticle.ParticleSize / _emitterConfig.Sprite.SourceRect.Width, SpriteEffects.None,
 						LayerDepth);
 			}
 		}

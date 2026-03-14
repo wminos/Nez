@@ -62,16 +62,14 @@ namespace Nez.AI.FSM
 			return (R)_states[type];
 		}
 
-
 		/// <summary>
 		/// changes the current state
 		/// </summary>
-		public R ChangeState<R>() where R : State<T>
+		public State<T> ChangeState(Type newType)
 		{
 			// avoid changing to the same state
-			var newType = typeof(R);
 			if (_currentState.GetType() == newType)
-				return _currentState as R;
+				return _currentState;
 
 			// only call end if we have a currentState
 			if (_currentState != null)
@@ -90,7 +88,26 @@ namespace Nez.AI.FSM
 			if (OnStateChanged != null)
 				OnStateChanged();
 
-			return _currentState as R;
+			return _currentState;
+		}
+
+		/// <summary>
+		/// changes the current state
+		/// </summary>
+		public R ChangeState<R>() where R : State<T>
+		{
+			return (R)ChangeState(typeof(R));
+		}
+
+		/// <summary>
+		/// changes to the previous state if one exists
+		/// </summary>
+		public State<T> ChangeToPreviousState()
+		{
+			if (PreviousState == null)
+				return _currentState;
+
+			return ChangeState(PreviousState.GetType());
 		}
 	}
 }

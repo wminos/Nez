@@ -136,7 +136,7 @@ namespace Nez.Systems
 					return map;
 			}
 
-			var tiledMap = new TmxMap().LoadTmxMap(name);
+			var tiledMap = new TmxMap().LoadTmxMap(name, this);
 
 			LoadedAssets[name] = tiledMap;
 			DisposableAssets.Add(tiledMap);
@@ -220,6 +220,30 @@ namespace Nez.Systems
 			var asepriteFile = AsepriteFileLoader.Load(name);
 			LoadedAssets.Add(name, asepriteFile);
 			return asepriteFile;
+		}
+
+		/// <summary>
+		/// loads a json file into a string.
+		/// </summary>
+		/// <returns>The json string.</returns>
+		/// <param name="name">The json filename.</param>
+		public string LoadJson(string name)
+		{
+			if (LoadedAssets.TryGetValue(name, out var asset))
+			{
+				if (asset is string json)
+					return json;
+			}
+
+			using (var stream = Path.IsPathRooted(name) ? File.OpenRead(name) : TitleContainer.OpenStream(name))
+			{
+				using (var reader = new StreamReader(stream))
+				{
+					var jsonString = reader.ReadToEnd();
+					LoadedAssets.Add(name, jsonString);
+					return jsonString;
+				}
+			}
 		}
 
 		/// <summary>

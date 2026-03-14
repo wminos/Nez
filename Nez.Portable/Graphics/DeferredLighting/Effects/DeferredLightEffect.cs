@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
+using System;
 
 
 namespace Nez.DeferredLighting
@@ -145,8 +145,8 @@ namespace Nez.DeferredLighting
 			SetLightIntensity(light.Intensity);
 
 			var objToWorld = Matrix.CreateScale(light.Radius * light.Entity.Transform.Scale.X) *
-			                 Matrix.CreateTranslation(light.Entity.Transform.Position.X + light.LocalOffset.X,
-				                 light.Entity.Transform.Position.Y + light.LocalOffset.Y, 0);
+							 Matrix.CreateTranslation(light.Entity.Transform.Position.X + light.LocalOffset.X,
+								 light.Entity.Transform.Position.Y + light.LocalOffset.Y, 0);
 			SetObjectToWorldMatrix(objToWorld);
 
 			CurrentTechnique = Techniques["DeferredPointLight"];
@@ -182,9 +182,10 @@ namespace Nez.DeferredLighting
 			var objToWorld =
 				Matrix.CreateScale(light.Bounds.Width * light.Entity.Transform.Scale.X,
 					light.Bounds.Height * light.Entity.Transform.Scale.Y, 1f) * Matrix.CreateTranslation(
-					light.Bounds.X - light.Bounds.Width * 0.5f, light.Bounds.Y - light.Bounds.Height * 0.5f, 0);
+					light.Bounds.X, light.Bounds.Y, 0);
 			SetObjectToWorldMatrix(objToWorld);
 
+			CurrentTechnique = Techniques["DeferredAreaLight"];
 			areaLightPass.Apply();
 		}
 
@@ -296,7 +297,7 @@ namespace Nez.DeferredLighting
 		public void SetSpotLightDirection(float degrees)
 		{
 			var radians = MathHelper.ToRadians(degrees);
-			var dir = new Vector2((float) Math.Cos(radians), (float) Math.Sin(radians));
+			var dir = new Vector2((float)Math.Cos(radians), (float)Math.Sin(radians));
 			SetSpotLightDirection(dir);
 		}
 

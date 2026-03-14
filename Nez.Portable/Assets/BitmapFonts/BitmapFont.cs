@@ -205,39 +205,51 @@ namespace Nez.BitmapFonts
 
 		public string WrapTextOriginal(string text, float maxLineWidth)
 		{
-			var words = text.Split(' ');
-			var sb = new StringBuilder();
-			var lineWidth = 0f;
-
 			if (maxLineWidth < _spaceWidth)
 				return string.Empty;
 
-			foreach (var word in words)
+			// Split the entire text into lines based on existing explicit newlines
+			var paragraphs = text.Split(new[] { "\r\n", "\n", "\r" }, System.StringSplitOptions.None);
+			var output = new StringBuilder();
+
+			foreach (var paragraph in paragraphs)
 			{
-				var size = MeasureString(word);
-				if (lineWidth + size.X < maxLineWidth)
+				var words = paragraph.Split(' ');
+				var sb = new StringBuilder();
+				var lineWidth = 0f;
+
+				foreach (var word in words)
 				{
-					sb.Append(word + " ");
-					lineWidth += size.X + _spaceWidth;
-				}
-				else
-				{
-					if (size.X > maxLineWidth)
+					var size = MeasureString(word);
+
+					if (lineWidth + size.X < maxLineWidth || lineWidth == 0)
 					{
-						if (sb.ToString() == "")
-							sb.Append(WrapTextOriginal(word.Insert(word.Length / 2, " ") + " ", maxLineWidth));
-						else
-							sb.Append("\n" + WrapTextOriginal(word.Insert(word.Length / 2, " ") + " ", maxLineWidth));
+						sb.Append(word + " ");
+						lineWidth += size.X + _spaceWidth;
 					}
 					else
 					{
-						sb.Append("\n" + word + " ");
-						lineWidth = size.X + _spaceWidth;
+						if (size.X > maxLineWidth)
+						{
+							if (sb.ToString() == "")
+								sb.Append(WrapTextOriginal(word.Insert(word.Length / 2, " ") + " ", maxLineWidth));
+							else
+								sb.Append("\n" + WrapTextOriginal(word.Insert(word.Length / 2, " ") + " ", maxLineWidth));
+						}
+						else
+						{
+							// If the word doesn't fit, start a new line with the current word
+							output.AppendLine(sb.ToString());
+							sb.Clear();
+							sb.Append(word + " ");
+							lineWidth = size.X + _spaceWidth;
+						}
 					}
 				}
+				output.AppendLine(sb.ToString());
 			}
 
-			return sb.ToString();
+			return output.ToString();
 		}
 
 		/// <summary>
@@ -397,6 +409,72 @@ namespace Nez.BitmapFonts
 
 			return new Point(Math.Max(currentLineWidth, blockWidth), blockHeight);
 		}
+		
+		/// <summary>
+	///     Providers the size, in pixels, of the specified number when drawn with this font.
+	/// </summary>
+	/// <param name="number">The number to measure</param>
+	/// <param name="useDefaultLineHeight">If true, only the lineHeight attribute of the bitmap font will be used to calculate the height.
+	/// If false, the height of the character image and the y offset will be considered when calculating the height.</param>
+	/// <returns>
+	///     The size, in pixels, of <paramref name="number" /> drawn with this font.
+	/// </returns>
+	public Point MeasureInt(int number, bool useDefaultLineHeight = true) {
+		var currentLineHeight = LineHeight;
+		var previousCharacter = ' ';
+		var currentLineWidth = 0;
+
+		char character;
+
+		// We use uint because of special case int.minValue
+		uint positiveNumber;
+
+		if (number < 0) {
+			character = '-';
+			ProcessCharacter(useDefaultLineHeight, previousCharacter, character, ref currentLineWidth,
+				ref currentLineHeight);
+			previousCharacter = character;
+
+			positiveNumber = (uint)-(long)number;
+		}
+		else {
+			positiveNumber = (uint)number;
+		}
+
+		uint tempNumber = positiveNumber;
+		uint divisor = 1;
+
+		while (tempNumber >= 10) {
+			divisor *= 10;
+			tempNumber /= 10;
+		}
+
+		while (divisor > 0) {
+			var digit = positiveNumber / divisor;
+			positiveNumber %= divisor;
+			divisor /= 10;
+
+			character = (char)('0' + digit);
+			ProcessCharacter(useDefaultLineHeight, previousCharacter, character, ref currentLineWidth,
+				ref currentLineHeight);
+			previousCharacter = character;
+		}
+
+		return new Point(currentLineWidth, currentLineHeight);
+	}
+
+	private void ProcessCharacter(bool useDefaultLineHeight, char previousCharacter, char character, ref int currentLineWidth,
+		ref int currentLineHeight) {
+		var data = this[character];
+
+		var width = data.XAdvance + GetKerning(previousCharacter, character) + Spacing.X;
+
+		currentLineWidth += width;
+
+		if (!useDefaultLineHeight) {
+			currentLineHeight = Math.Max(currentLineHeight, data.Bounds.Height + data.Offset.Y);
+		}
+	}
 
 		~BitmapFont() => Dispose();
 
